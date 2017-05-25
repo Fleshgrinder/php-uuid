@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 if (class_exists('UUIDParseException') === false) {
 	/**
 	 * Thrown if parsing of a UUID from a string fails.
@@ -55,10 +53,10 @@ if (class_exists('UUIDParseException') === false) {
 		 * @param string $reason why parsing the UUID string failed.
 		 * @param string $input that should be parsed.
 		 * @param int $position at which parsing failed.
-		 * @param Throwable|null $previous error/exception that lead to this
-		 *     failure, if any.
+		 * @param Exception|null $previous exception that lead to this failure,
+		 *     if any.
 		 */
-		public function __construct(string $reason, string $input, int $position = 0, Throwable $previous = null) {
+		public function __construct($reason, $input, $position = 0, Exception $previous = null) {
 			parent::__construct($reason, 0, $previous);
 
 			$this->input    = $input;
@@ -70,7 +68,7 @@ if (class_exists('UUIDParseException') === false) {
 		 *
 		 * @return string
 		 */
-		public function getInput(): string {
+		public function getInput() {
 			return $this->input;
 		}
 
@@ -79,7 +77,7 @@ if (class_exists('UUIDParseException') === false) {
 		 *
 		 * @return int
 		 */
-		public function getPosition(): int {
+		public function getPosition() {
 			return $this->position;
 		}
 	}

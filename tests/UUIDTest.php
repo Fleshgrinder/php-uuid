@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -140,7 +138,7 @@ final class UUIDTest extends TestCase {
 	 * @expectedException UnexpectedValueException
 	 * @expectedExceptionMessage Expected exactly 16 bytes, but found
 	 */
-	public static function testDeserializationFailure(string $binary) {
+	public static function testDeserializationFailure($binary) {
 		$i = strlen($binary);
 
 		unserialize("O:4:\"UUID\":1:{s:12:\"\0UUID\0binary\";s:{$i}:\"{$binary}\";}");
@@ -163,7 +161,7 @@ final class UUIDTest extends TestCase {
 	 * @expectedException InvalidArgumentException
 	 * @expectedExceptionMessage Expected exactly 16 bytes, but got
 	 */
-	public static function testFromBinaryFailure(string $binary) {
+	public static function testFromBinaryFailure($binary) {
 		UUID::fromBinary($binary);
 	}
 
@@ -182,7 +180,7 @@ final class UUIDTest extends TestCase {
 	 * @covers ::getVariant
 	 * @dataProvider provideVariants
 	 */
-	public static function testGetVariant(int $expected, string $binary) {
+	public static function testGetVariant($expected, $binary) {
 		static::assertSame($expected, UUID::fromBinary($binary)->getVariant());
 	}
 
@@ -201,7 +199,7 @@ final class UUIDTest extends TestCase {
 	 * @covers ::getVariant
 	 * @dataProvider provideNCSVariants
 	 */
-	public static function testNCSVariants(string $binary) {
+	public static function testNCSVariants($binary) {
 		static::assertSame(UUID::VARIANT_NCS, UUID::fromBinary($binary)->getVariant());
 	}
 
@@ -228,7 +226,7 @@ final class UUIDTest extends TestCase {
 	 * @covers ::getVersion
 	 * @dataProvider provideVersions
 	 */
-	public static function testGetVersion(int $expected, UUID $uuid) {
+	public static function testGetVersion($expected, UUID $uuid) {
 		static::assertSame($expected, $uuid->getVersion());
 	}
 
@@ -251,8 +249,8 @@ final class UUIDTest extends TestCase {
 	 * @covers ::parse
 	 * @dataProvider provideParseInput
 	 */
-	public static function testParse(string $input) {
-		$p = new ReflectionProperty(UUID::class, 'binary');
+	public static function testParse($input) {
+		$p = new ReflectionProperty('UUID', 'binary');
 		$p->setAccessible(true);
 
 		static::assertSame("\x12\x3e\x45\x67\xe8\x9b\x12\xd3\xa4\x56\x42\x66\x55\x44\x00\x00", $p->getValue(UUID::parse($input)));
@@ -275,7 +273,7 @@ final class UUIDTest extends TestCase {
 	 * @expectedException UUIDParseException
 	 * @expectedExceptionMessage Expected at least 32 hexadecimal digits, but got
 	 */
-	public static function testParseInsufficientLengthFailure(string $input) {
+	public static function testParseInsufficientLengthFailure($input) {
 		UUID::parse($input);
 	}
 
@@ -333,7 +331,7 @@ final class UUIDTest extends TestCase {
 	 * @covers ::__construct
 	 * @covers ::fromBinary
 	 * @covers ::__set
-	 * @expectedException Error
+	 * @expectedException Exception
 	 * @expectedExceptionMessage Cannot set dynamic properties on immutable UUID object
 	 */
 	public static function testMagicSet() {
@@ -344,11 +342,11 @@ final class UUIDTest extends TestCase {
 	 * @covers ::__construct
 	 * @covers ::v4
 	 * @covers ::__clone
-	 * @expectedException Error
+	 * @expectedException Exception
 	 * @expectedExceptionMessage Cannot clone immutable UUID object
 	 */
 	public static function testMagicClone() {
-		$m = new ReflectionMethod(UUID::class, '__clone');
+		$m = new ReflectionMethod('UUID', '__clone');
 		$m->setAccessible(true);
 		$m->invoke(UUID::v4());
 	}

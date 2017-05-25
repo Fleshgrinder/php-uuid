@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -43,25 +41,6 @@ final class UUIDParseExceptionTest extends TestCase {
 		static::assertSame($i, $e->getInput());
 		static::assertSame($p, $e->getPosition());
 		static::assertNull($e->getPrevious());
-	}
-
-	/**
-	 * @covers ::__construct
-	 * @covers ::getInput
-	 * @covers ::getPosition
-	 */
-	public static function testConstructWithPreviousError() {
-		$r = __METHOD__ . '-reason';
-		$i = __METHOD__ . '-input';
-		$p = new Error;
-		$e = new UUIDParseException($r, $i, 0, $p);
-
-		static::assertSame(0, $e->getCode());
-		static::assertSame(__FILE__, $e->getFile());
-		static::assertSame($r, $e->getMessage());
-		static::assertSame($i, $e->getInput());
-		static::assertSame(0, $e->getPosition());
-		static::assertSame($p, $e->getPrevious());
 	}
 
 	/**

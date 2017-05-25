@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 if (class_exists('UUID') === false) {
 	/**
 	 * RFC 4122 compliant immutable UUID class.
@@ -258,7 +256,7 @@ if (class_exists('UUID') === false) {
 		 * @throws InvalidArgumentException if the input is not exactly 16 bytes
 		 *     long.
 		 */
-		public static function fromBinary(string $input): UUID {
+		public static function fromBinary($input) {
 			$length = strlen($input);
 			if ($length !== 16) {
 				throw new InvalidArgumentException("Expected exactly 16 bytes, but got {$length}");
@@ -321,7 +319,7 @@ if (class_exists('UUID') === false) {
 		 * @return UUID constructed from the parsed input.
 		 * @throws UUIDParseException if parsing of the input fails.
 		 */
-		public static function parse(string $input): UUID {
+		public static function parse($input) {
 			$input = ltrim($input, " \t{-");
 
 			if (strpos($input, 'urn:uuid:') === 0) {
@@ -338,8 +336,6 @@ if (class_exists('UUID') === false) {
 			$input  = str_replace('-', '', $input);
 			$binary = @hex2bin($input);
 			if ($binary === false) {
-				error_clear_last();
-
 				for ($position = 0, $limit = strlen($input); $position < $limit; ++$position) {
 					$char = $input{$position};
 					if (
@@ -414,7 +410,7 @@ if (class_exists('UUID') === false) {
 		 * @param string $name to construct the UUID from.
 		 * @return UUID
 		 */
-		public static function v3(UUID $namespace, string $name): UUID {
+		public static function v3(UUID $namespace, $name) {
 			$uuid = new UUID;
 
 			$uuid->binary    = md5($namespace->toBinary() . $name, true);
@@ -455,7 +451,7 @@ if (class_exists('UUID') === false) {
 		 * @return UUID
 		 * @throws Exception if it was not possible to gather sufficient entropy.
 		 */
-		public static function v4(): UUID {
+		public static function v4() {
 			$uuid = new UUID;
 
 			$uuid->binary    = random_bytes(16);
@@ -506,7 +502,7 @@ if (class_exists('UUID') === false) {
 		 * @param string $name to construct the UUID from.
 		 * @return UUID
 		 */
-		public static function v5(UUID $namespace, string $name): UUID {
+		public static function v5(UUID $namespace, $name) {
 			$uuid = new UUID;
 
 			$uuid->binary    = substr(sha1($namespace->toBinary() . $name, true), 0, 16);
@@ -525,7 +521,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/Domain_Name_System
 		 * @return UUID
 		 */
-		public static function NamespaceDNS(): UUID {
+		public static function NamespaceDNS() {
 			$uuid = new UUID;
 			$uuid->binary = "\x6b\xa7\xb8\x10\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
@@ -540,7 +536,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/Object_identifier
 		 * @return UUID
 		 */
-		public static function NamespaceOID(): UUID {
+		public static function NamespaceOID() {
 			$uuid = new UUID;
 			$uuid->binary = "\x6b\xa7\xb8\x12\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
@@ -555,7 +551,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/URL
 		 * @return UUID
 		 */
-		public static function NamespaceURL(): UUID {
+		public static function NamespaceURL() {
 			$uuid = new UUID;
 			$uuid->binary = "\x6b\xa7\xb8\x11\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
@@ -573,7 +569,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol
 		 * @return UUID
 		 */
-		public static function NamespaceX500(): UUID {
+		public static function NamespaceX500() {
 			$uuid = new UUID;
 			$uuid->binary = "\x6b\xa7\xb8\x14\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
@@ -588,14 +584,14 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Nil_UUID
 		 * @return UUID
 		 */
-		public static function Nil(): UUID {
+		public static function Nil() {
 			$uuid = new UUID;
 			$uuid->binary = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 			return $uuid;
 		}
 
 		/**
-		 * Callback for dynamic adding of properties which throws an {@see Error}
+		 * Callback for dynamic adding of properties which throws an {@see Exception}
 		 * upon every invocation, direct or indirect. This is necessary to protect
 		 * the promised immutability of this object. Not doing so could lead to
 		 * problems with the comparison operators, since PHP always compares all
@@ -606,10 +602,10 @@ if (class_exists('UUID') === false) {
 		 * @param mixed $_
 		 * @param mixed $__
 		 * @return void
-		 * @throws Error upon every invocation, direct or indirect.
+		 * @throws Exception upon every invocation, direct or indirect.
 		 */
-		public function __set($_, $__): void {
-			throw new Error('Cannot set dynamic properties on immutable UUID object');
+		public function __set($_, $__) {
+			throw new Exception('Cannot set dynamic properties on immutable UUID object');
 		}
 
 		/**
@@ -647,7 +643,7 @@ if (class_exists('UUID') === false) {
 		 * @returns int An integer in [0, 3] where each value corresponds to one of
 		 *     the `UUID::VARIANT_*` class constants.
 		 */
-		public function getVariant(): int {
+		public function getVariant() {
 			$ord = ord($this->binary{8});
 			if (($ord & 0xC0) === 0x80) return static::VARIANT_RFC4122;
 			if (($ord & 0xE0) === 0xC0) return static::VARIANT_MICROSOFT;
@@ -677,7 +673,7 @@ if (class_exists('UUID') === false) {
 		 *     of the `UUID::VERSION_*` class constants. The others are not defined
 		 *     in RFC 4122.
 		 */
-		public function getVersion(): int {
+		public function getVersion() {
 			return ord($this->binary{6}) >> 4;
 		}
 
@@ -693,7 +689,7 @@ if (class_exists('UUID') === false) {
 		 * @return bool **TRUE** if this is the special nil UUID; **FALSE**
 		 *     otherwise.
 		 */
-		public function isNil(): bool {
+		public function isNil() {
 			return $this->binary === "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 		}
 
@@ -720,7 +716,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.toBinary
 		 * @return string
 		 */
-		public function toBinary(): string {
+		public function toBinary() {
 			return $this->binary;
 		}
 
@@ -745,7 +741,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.toHex
 		 * @return string
 		 */
-		public function toHex(): string {
+		public function toHex() {
 			return bin2hex($this->binary);
 		}
 
@@ -773,7 +769,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Format
 		 * @return string
 		 */
-		public function toString(): string {
+		public function toString() {
 			$hex = bin2hex($this->binary);
 
 			return substr($hex, 0, 8) . '-' .
@@ -789,9 +785,10 @@ if (class_exists('UUID') === false) {
 		 * immutable objects.
 		 *
 		 * @return void
+		 * @throws Exception upon every invocation.
 		 */
 		private function __clone() {
-			throw new Error('Cannot clone immutable UUID object');
+			throw new Exception('Cannot clone immutable UUID object');
 		}
 	}
 }
