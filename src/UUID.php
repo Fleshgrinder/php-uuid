@@ -789,6 +789,7 @@ if (class_exists('UUID') === false) {
 		 * immutable objects.
 		 *
 		 * @return void
+		 * @throws Error upon every invocation.
 		 */
 		private function __clone() {
 			throw new Error('Cannot clone immutable UUID object');
