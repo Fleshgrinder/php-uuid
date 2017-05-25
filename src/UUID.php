@@ -125,7 +125,7 @@ if (class_exists('UUID') === false) {
 		 * @since 7.2
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.1.1
 		 */
-		public const VARIANT_NCS = 0;
+		const VARIANT_NCS = 0;
 
 		/**
 		 * Code for the RFC 4122 variant of UUIDs.
@@ -135,7 +135,7 @@ if (class_exists('UUID') === false) {
 		 * @since 7.2
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.1.1
 		 */
-		public const VARIANT_RFC4122 = 1;
+		const VARIANT_RFC4122 = 1;
 
 		/**
 		 * Code for the (reserved) Microsoft variant of UUIDs, the GUIDs.
@@ -143,7 +143,7 @@ if (class_exists('UUID') === false) {
 		 * @since 7.2
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.1.1
 		 */
-		public const VARIANT_MICROSOFT = 2;
+		const VARIANT_MICROSOFT = 2;
 
 		/**
 		 * Version code for the future reserved variant of UUIDs.
@@ -151,7 +151,7 @@ if (class_exists('UUID') === false) {
 		 * @since 7.2
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.1.1
 		 */
-		public const VARIANT_FUTURE_RESERVED = 3;
+		const VARIANT_FUTURE_RESERVED = 3;
 
 		/**
 		 * Version code for date-time and IEEE 802 MAC address UUIDs.
@@ -164,7 +164,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.2
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_1_.28date-time_and_MAC_address.29
 		 */
-		public const VERSION_1_TIME_BASED = 1;
+		const VERSION_1_TIME_BASED = 1;
 
 		/**
 		 * Version code for date-time and IEEE 802 MAC address UUIDs (DCE security
@@ -180,7 +180,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.2
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_2_.28date-time_and_MAC_Address.2C_DCE_security_version.29
 		 */
-		public const VERSION_2_DCE_SECURITY = 2;
+		const VERSION_2_DCE_SECURITY = 2;
 
 		/**
 		 * Version code for namespace/name-based MD5 hashed UUIDs.
@@ -190,7 +190,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.3
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Versions_3_and_5_.28namespace_name-based.29
 		 */
-		public const VERSION_3_NAME_BASED_MD5 = 3;
+		const VERSION_3_NAME_BASED_MD5 = 3;
 
 		/**
 		 * Version code for random UUIDs.
@@ -200,7 +200,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.4
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
 		 */
-		public const VERSION_4_RANDOM = 4;
+		const VERSION_4_RANDOM = 4;
 
 		/**
 		 * Version code for namespace/name-based SHA1 hashed UUIDs.
@@ -210,7 +210,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.3
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Versions_3_and_5_.28namespace_name-based.29
 		 */
-		public const VERSION_5_NAME_BASED_SHA1 = 5;
+		const VERSION_5_NAME_BASED_SHA1 = 5;
 
 		/**
 		 * This UUID's 128 bit integer value as 16 byte binary string.
@@ -622,7 +622,7 @@ if (class_exists('UUID') === false) {
 		 * @throws UnexpectedValueException if the binary string is not exactly 16
 		 *     bytes long.
 		 */
-		public function __wakeup(): void {
+		public function __wakeup() {
 			$length = strlen($this->binary);
 			if ($length !== 16) {
 				throw new UnexpectedValueException("Expected exactly 16 bytes, but found {$length}");

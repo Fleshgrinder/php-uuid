@@ -58,7 +58,7 @@ if (class_exists('UUIDParseException') === false) {
 		 * @param Throwable|null $previous error/exception that lead to this
 		 *     failure, if any.
 		 */
-		public function __construct(string $reason, string $input, int $position = 0, ?Throwable $previous = null) {
+		public function __construct(string $reason, string $input, int $position = 0, Throwable $previous = null) {
 			parent::__construct($reason, 0, $previous);
 
 			$this->input    = $input;
