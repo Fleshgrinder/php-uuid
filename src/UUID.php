@@ -258,7 +258,7 @@ if (class_exists('UUID') === false) {
 		 * @throws InvalidArgumentException if the input is not exactly 16 bytes
 		 *     long.
 		 */
-		public static function fromBinary(string $input): UUID {
+		public static function fromBinary(string $input): self {
 			$length = strlen($input);
 			if ($length !== 16) {
 				throw new InvalidArgumentException("Expected exactly 16 bytes, but got {$length}");
@@ -321,7 +321,7 @@ if (class_exists('UUID') === false) {
 		 * @return UUID constructed from the parsed input.
 		 * @throws UUIDParseException if parsing of the input fails.
 		 */
-		public static function parse(string $input): UUID {
+		public static function parse(string $input): self {
 			$input = ltrim($input, " \t{-");
 
 			if (strpos($input, 'urn:uuid:') === 0) {
@@ -414,7 +414,7 @@ if (class_exists('UUID') === false) {
 		 * @param string $name to construct the UUID from.
 		 * @return UUID
 		 */
-		public static function v3(UUID $namespace, string $name): UUID {
+		public static function v3(self $namespace, string $name): self {
 			$uuid = new UUID;
 
 			$uuid->binary    = md5($namespace->toBinary() . $name, true);
@@ -455,7 +455,7 @@ if (class_exists('UUID') === false) {
 		 * @return UUID
 		 * @throws Exception if it was not possible to gather sufficient entropy.
 		 */
-		public static function v4(): UUID {
+		public static function v4(): self {
 			$uuid = new UUID;
 
 			$uuid->binary    = random_bytes(16);
@@ -506,7 +506,7 @@ if (class_exists('UUID') === false) {
 		 * @param string $name to construct the UUID from.
 		 * @return UUID
 		 */
-		public static function v5(UUID $namespace, string $name): UUID {
+		public static function v5(self $namespace, string $name): self {
 			$uuid = new UUID;
 
 			$uuid->binary    = substr(sha1($namespace->toBinary() . $name, true), 0, 16);
@@ -525,7 +525,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/Domain_Name_System
 		 * @return UUID
 		 */
-		public static function NamespaceDNS(): UUID {
+		public static function NamespaceDNS(): self {
 			$uuid = new UUID;
 			$uuid->binary = "\x6b\xa7\xb8\x10\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
@@ -540,7 +540,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/Object_identifier
 		 * @return UUID
 		 */
-		public static function NamespaceOID(): UUID {
+		public static function NamespaceOID(): self {
 			$uuid = new UUID;
 			$uuid->binary = "\x6b\xa7\xb8\x12\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
@@ -555,7 +555,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/URL
 		 * @return UUID
 		 */
-		public static function NamespaceURL(): UUID {
+		public static function NamespaceURL(): self {
 			$uuid = new UUID;
 			$uuid->binary = "\x6b\xa7\xb8\x11\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
@@ -573,7 +573,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol
 		 * @return UUID
 		 */
-		public static function NamespaceX500(): UUID {
+		public static function NamespaceX500(): self {
 			$uuid = new UUID;
 			$uuid->binary = "\x6b\xa7\xb8\x14\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
@@ -588,7 +588,7 @@ if (class_exists('UUID') === false) {
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Nil_UUID
 		 * @return UUID
 		 */
-		public static function Nil(): UUID {
+		public static function Nil(): self {
 			$uuid = new UUID;
 			$uuid->binary = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 			return $uuid;
@@ -609,7 +609,7 @@ if (class_exists('UUID') === false) {
 		 * @throws Error upon every invocation, direct or indirect.
 		 */
 		public function __set($_, $__): void {
-			throw new Error('Cannot set dynamic properties on immutable UUID object');
+			throw new Error('Cannot set dynamic properties on immutable ' . __CLASS__ . ' object');
 		}
 
 		/**
@@ -792,7 +792,7 @@ if (class_exists('UUID') === false) {
 		 * @throws Error upon every invocation.
 		 */
 		private function __clone() {
-			throw new Error('Cannot clone immutable UUID object');
+			throw new Error('Cannot clone immutable ' . __CLASS__ . ' object');
 		}
 	}
 }
