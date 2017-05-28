@@ -605,7 +605,7 @@ if (class_exists('UUID') === false) {
 		 * @throws Exception upon every invocation, direct or indirect.
 		 */
 		public function __set($_, $__) {
-			throw new Exception('Cannot set dynamic properties on immutable UUID object');
+			throw new Exception('Cannot set dynamic properties on immutable ' . __CLASS__ . ' object');
 		}
 
 		/**
@@ -788,7 +788,7 @@ if (class_exists('UUID') === false) {
 		 * @throws Exception upon every invocation.
 		 */
 		private function __clone() {
-			throw new Exception('Cannot clone immutable UUID object');
+			throw new Exception('Cannot clone immutable ' . __CLASS__ . ' object');
 		}
 	}
 }
