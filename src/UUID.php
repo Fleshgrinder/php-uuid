@@ -8,8 +8,7 @@ if (class_exists('UUID') === false) {
 	 *
 	 * This class provides generation and parsing capabilities for Universally
 	 * Unique Identifiers (UUIDs, also known as Globally Unique Identifiers
-	 * [GUIDs])
-	 * as specified in RFC 4122.
+	 * [GUIDs]) as specified in [RFC 4122][rfc].
 	 *
 	 * UUIDs are 128 bit integers that guarantee uniqueness across space and time.
 	 * They are mainly used to assign identifiers to entities without requiring a
@@ -19,7 +18,7 @@ if (class_exists('UUID') === false) {
 	 *
 	 * There are different types of UUIDs, known as variants. This implementation
 	 * generates UUIDs according to the Leach-Salz variant; the one specified in
-	 * RFC 4122 as variant 1. Textual parsing supports both variant 1 and 2
+	 * [RFC 4122][rfc] as variant 1. Textual parsing supports both variant 1 and 2
 	 * (Microsoft), and construction supports any kind of UUID. However, note that
 	 * the provided methods are **not** guaranteed to provide meaningful results if
 	 * any other variant than the Leach-Salz one is used.
@@ -37,7 +36,7 @@ if (class_exists('UUID') === false) {
 	 * and thus uses the best available random source of the operating system.
 	 *
 	 * Versions 1 and 2 are not supported due to privacy/security concerns. Refer
-	 * to the Wikipedia article for more information.
+	 * to the [Wikipedia article][wiki] for more information.
 	 *
 	 * ## Examples
 	 * ```
@@ -113,10 +112,10 @@ if (class_exists('UUID') === false) {
 	 * ?>
 	 * ```
 	 *
+	 * [rfc]: https://tools.ietf.org/html/rfc4122
+	 * [wiki]: https://en.wikipedia.org/wiki/Universally_unique_identifier
 	 * @since 7.2
 	 * @see https://php.net/uuid
-	 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier
-	 * @see https://tools.ietf.org/html/rfc4122
 	 */
 	final class UUID {
 		/**
@@ -158,8 +157,9 @@ if (class_exists('UUID') === false) {
 		 *
 		 * Generation of this version is not supported by this implementation due
 		 * to security concerns. Version 4 UUIDs are a good replacement for version
-		 * 1 UUIDs without the privacy/security concerns (see Wikipedia).
+		 * 1 UUIDs without the privacy/security concerns (see [Wikipedia][wiki]).
 		 *
+		 * [wiki]: https://en.wikipedia.org/wiki/Universally_unique_identifier
 		 * @since 7.2
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.2
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_1_.28date-time_and_MAC_address.29
@@ -173,9 +173,10 @@ if (class_exists('UUID') === false) {
 		 * Generation of this version is not supported by this implementation due
 		 * to security concerns, and uniqueness limitations for applications with
 		 * high allocations. Version 4 UUIDs are a good replacement for version 2
-		 * UUIDs without the privacy/security concerns (see Wikipedia), and they
-		 * support high allocations.
+		 * UUIDs without the privacy/security concerns (see [Wikipedia][wiki]), and
+		 * they support high allocations.
 		 *
+		 * [wiki]: https://en.wikipedia.org/wiki/Universally_unique_identifier
 		 * @since 7.2
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.2
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_2_.28date-time_and_MAC_Address.2C_DCE_security_version.29
@@ -252,19 +253,16 @@ if (class_exists('UUID') === false) {
 		 * @since 7.2
 		 * @see https://php.net/uuid.fromBinary
 		 * @see toBinary
-		 * @param string $input string of exactly 16 bytes to construct the
-		 *     instance from.
-		 * @return UUID instance constructed from the input.
-		 * @throws InvalidArgumentException if the input is not exactly 16 bytes
-		 *     long.
+		 * @param string $input string of exactly 16 bytes to construct the instance from.
+		 * @return \UUID UUID constructed from the binary input.
+		 * @throws \InvalidArgumentException if the input is not 16 bytes long.
 		 */
 		public static function fromBinary(string $input): self {
-			$length = strlen($input);
-			if ($length !== 16) {
-				throw new InvalidArgumentException("Expected exactly 16 bytes, but got {$length}");
+			if (strlen($input) !== 16) {
+				throw new InvalidArgumentException('Expected exactly 16 bytes, but got ' . strlen($input));
 			}
 
-			$uuid        = new UUID;
+			$uuid = new UUID;
 			$uuid->bytes = $input;
 			return $uuid;
 		}
@@ -282,9 +280,7 @@ if (class_exists('UUID') === false) {
 		 * Leading and trailing whitespace, namely spaces (` `) and tabs (`\t`), is
 		 * ignored, so are leading opening braces (`{`) and trailing closing braces
 		 * (`}`). Hyphens (`-`) are ignored everywhere. The parsing algorithm
-		 * follows the [robustness
-		 * principle](https://en.wikipedia.org/wiki/Robustness_principle) and is
-		 * not meant for validation.
+		 * follows the [robustness principle][wrp] and is not meant for validation.
 		 *
 		 * ## Examples
 		 * ```
@@ -297,8 +293,7 @@ if (class_exists('UUID') === false) {
 		 * UUID::parse('{01234567-89ab-cdef-0123-456789abcdef}');
 		 *
 		 * // Leading and trailing garbage is ignored, so are extraneous hyphens.
-		 * UUID::parse(" \t ---- {
-		 * urn:uuid:----0123-4567-89ab-cdef-0123-4567-89ab-cdef---- } ---- \t ");
+		 * UUID::parse(" \t ---- { urn:uuid:----0123-4567-89ab-cdef-0123-4567-89ab-cdef---- } ---- \t ");
 		 *
 		 * // However, note that there cannot be whitespace or braces between the
 		 * // URN scheme and the UUID itUUID.
@@ -306,20 +301,20 @@ if (class_exists('UUID') === false) {
 		 *     UUID::parse('urn:uuid:{01234567-89ab-cdef-0123-456789abcdef');
 		 * }
 		 * catch (UUIDParseException $e) {
-		 *     assert($e->getMessage() === 'Expected hexadecimal digit, but found
-		 * '{' (0x7b)');
+		 *     assert($e->getMessage() === 'Expected hexadecimal digit, but found '{' (0x7b)');
 		 * }
 		 *
 		 * ?>
 		 * ```
 		 *
+		 * [wrp]: https://en.wikipedia.org/wiki/Robustness_principle
 		 * @since 7.2
 		 * @see https://php.net/uuid.parse
 		 * @see toHex
 		 * @see toString
 		 * @param string $input to parse as UUID and construct the instance from.
-		 * @return UUID constructed from the parsed input.
-		 * @throws UUIDParseException if parsing of the input fails.
+		 * @return \UUID UUID constructed from the parsed input.
+		 * @throws \UUIDParseException if parsing of the input fails.
 		 */
 		public static function parse(string $input): self {
 			$input = ltrim($input, " \t{-");
@@ -330,9 +325,8 @@ if (class_exists('UUID') === false) {
 
 			$input = rtrim($input, " \t}-");
 
-			$length = strlen($input);
-			if ($length < 32) {
-				throw new UUIDParseException("Expected at least 32 hexadecimal digits, but got {$length}", $input);
+			if (strlen($input) < 32) {
+				throw new UUIDParseException('Expected at least 32 hexadecimal digits, but got ' . strlen($input), $input);
 			}
 
 			$input  = str_replace('-', '', $input);
@@ -363,7 +357,7 @@ if (class_exists('UUID') === false) {
 				throw new UUIDParseException('Expected no more than 32 hexadecimal digits', $input, $length - 1);
 			}
 
-			$uuid        = new UUID;
+			$uuid = new UUID;
 			$uuid->bytes = $binary;
 			return $uuid;
 		}
@@ -401,7 +395,7 @@ if (class_exists('UUID') === false) {
 		 * assert($uuid->getVariant() === UUID::VARIANT_RFC4122);
 		 * assert($uuid->getVersion() === UUID::VERSION_3_NAME_BASED_MD5);
 		 * assert($uuid->toString()   === '11a38b9a-b3da-360f-9353-a5a725514269');
-		 * assert($uuid               == UUID::v3(UUID::NamespaceDNS(), 'php.net'));
+		 * assert($uuid               ==  UUID::v3(UUID::NamespaceDNS(), 'php.net'));
 		 *
 		 * ?>
 		 * ```
@@ -410,9 +404,10 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.v3
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.3
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Versions_3_and_5_.28namespace_name-based.29
-		 * @param UUID $namespace to construct the UUID in.
+		 * @param \UUID $namespace to construct the UUID in.
 		 * @param string $name to construct the UUID from.
-		 * @return UUID
+		 * @return \UUID UUID constructed from the name in the namespace.
+		 * @throws \Error if the namespace does not encapsulate a valid UUID.
 		 */
 		public static function v3(self $namespace, string $name): self {
 			$uuid = new UUID;
@@ -424,6 +419,7 @@ if (class_exists('UUID') === false) {
 			return $uuid;
 		}
 
+		/**
 		/**
 		 * Construct new version 4 UUID.
 		 *
@@ -443,7 +439,7 @@ if (class_exists('UUID') === false) {
 		 * assert($uuid->isNil()      === false);
 		 * assert($uuid->getVariant() === UUID::VARIANT_RFC4122);
 		 * assert($uuid->getVersion() === UUID::VERSION_4_RANDOM);
-		 * assert($uuid               != UUID::v4());
+		 * assert($uuid               !=  UUID::v4());
 		 *
 		 * ?>
 		 * ```
@@ -452,8 +448,8 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.v4
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.4
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
-		 * @return UUID
-		 * @throws Exception if it was not possible to gather sufficient entropy.
+		 * @return \UUID UUID constructed from random data.
+		 * @throws \Exception if it was not possible to gather sufficient entropy.
 		 */
 		public static function v4(): self {
 			$uuid = new UUID;
@@ -493,7 +489,7 @@ if (class_exists('UUID') === false) {
 		 * assert($uuid->getVariant() === UUID::VARIANT_RFC4122);
 		 * assert($uuid->getVersion() === UUID::VERSION_5_NAME_BASED_SHA1);
 		 * assert($uuid->toString()   === 'c4a760a8-dbcf-5254-a0d9-6a4474bd1b62');
-		 * assert($uuid               == UUID::v5(UUID::NamespaceDNS(), 'php.net'));
+		 * assert($uuid               ==  UUID::v5(UUID::NamespaceDNS(), 'php.net'));
 		 *
 		 * ?>
 		 * ```
@@ -502,9 +498,10 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.v5
 		 * @see @see https://tools.ietf.org/html/rfc4122#section-4.3
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Versions_3_and_5_.28namespace_name-based.29
-		 * @param UUID $namespace to construct the UUID in.
+		 * @param \UUID $namespace to construct the UUID in.
 		 * @param string $name to construct the UUID from.
-		 * @return UUID
+		 * @return \UUID UUID constructed from the name in the namespace.
+		 * @throws \Error if the namespace does not encapsulate a valid UUID.
 		 */
 		public static function v5(self $namespace, string $name): self {
 			$uuid = new UUID;
@@ -523,10 +520,10 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.NamespaceDNS
 		 * @see https://tools.ietf.org/html/rfc4122#appendix-C
 		 * @see https://en.wikipedia.org/wiki/Domain_Name_System
-		 * @return UUID
+		 * @return \UUID Predefined DNS namespace UUID.
 		 */
 		public static function NamespaceDNS(): self {
-			$uuid        = new UUID;
+			$uuid = new UUID;
 			$uuid->bytes = "\x6b\xa7\xb8\x10\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
 		}
@@ -538,10 +535,10 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.NamespaceOID
 		 * @see https://tools.ietf.org/html/rfc4122#appendix-C
 		 * @see https://en.wikipedia.org/wiki/Object_identifier
-		 * @return UUID
+		 * @return \UUID Predefined OID namespace UUID.
 		 */
 		public static function NamespaceOID(): self {
-			$uuid        = new UUID;
+			$uuid = new UUID;
 			$uuid->bytes = "\x6b\xa7\xb8\x12\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
 		}
@@ -553,10 +550,10 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.NamespaceURL
 		 * @see https://tools.ietf.org/html/rfc4122#appendix-C
 		 * @see https://en.wikipedia.org/wiki/URL
-		 * @return UUID
+		 * @return \UUID Predefined URL namespace UUID.
 		 */
 		public static function NamespaceURL(): self {
-			$uuid        = new UUID;
+			$uuid = new UUID;
 			$uuid->bytes = "\x6b\xa7\xb8\x11\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
 		}
@@ -571,10 +568,10 @@ if (class_exists('UUID') === false) {
 		 * @see https://tools.ietf.org/html/rfc4122#appendix-C
 		 * @see https://en.wikipedia.org/wiki/X.500
 		 * @see https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol
-		 * @return UUID
+		 * @return \UUID Predefined X.500 namespace UUID instance.
 		 */
 		public static function NamespaceX500(): self {
-			$uuid        = new UUID;
+			$uuid = new UUID;
 			$uuid->bytes = "\x6b\xa7\xb8\x14\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
 		}
@@ -586,10 +583,10 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.Nil
 		 * @see https://tools.ietf.org/html/rfc4122#section-4.1.7
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Nil_UUID
-		 * @return UUID
+		 * @return \UUID Predefined special nil UUID.
 		 */
 		public static function Nil(): self {
-			$uuid        = new UUID;
+			$uuid = new UUID;
 			$uuid->bytes = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 			return $uuid;
 		}
@@ -606,7 +603,7 @@ if (class_exists('UUID') === false) {
 		 * @param mixed $_
 		 * @param mixed $__
 		 * @return void
-		 * @throws Error upon every invocation, direct or indirect.
+		 * @throws \Error upon every invocation, direct or indirect.
 		 */
 		public function __set($_, $__): void {
 			throw new Error('Cannot set dynamic properties on immutable ' . __CLASS__ . ' object');
@@ -619,17 +616,40 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.__wakeup
 		 * @see unserialize()
 		 * @return void
-		 * @throws UnexpectedValueException if the binary string is not exactly 16
-		 *     bytes long.
+		 * @throws \UnexpectedValueException if the value of the {@see bytes}
+		 *     property is not of type string, or not exactly 16 bytes long.
 		 */
 		public function __wakeup(): void {
 			if (is_string($this->bytes) === false) {
-				throw new UnexpectedValueException('Expected value of type string, but found ' . gettype($this->bytes));
+				$type = 'unknown';
+
+				if (is_array($this->bytes)) {
+					$type = 'array';
+				}
+				elseif ($this->bytes === true || $this->bytes === false) {
+					$type = 'boolean';
+				}
+				elseif (is_float($this->bytes)) {
+					$type = 'float';
+				}
+				elseif (is_int($this->bytes)) {
+					$type = 'integer';
+				}
+				elseif ($this->bytes === null) {
+					$type = 'null';
+				}
+				elseif (is_object($this->bytes)) {
+					$type = 'object';
+				}
+				elseif (is_resource($this->bytes)) {
+					$type = 'resource';
+				}
+
+				throw new UnexpectedValueException('Expected ' . __CLASS__ . '::$bytes value to be of type string, but found ' . $type);
 			}
 
-			$length = strlen($this->bytes);
-			if ($length !== 16) {
-				throw new UnexpectedValueException("Expected exactly 16 bytes, but found {$length}");
+			if (strlen($this->bytes) !== 16) {
+				throw new UnexpectedValueException('Expected ' . __CLASS__ . '::$bytes value to be exactly 16 bytes long, but found ' . strlen($this->bytes));
 			}
 		}
 
@@ -648,11 +668,12 @@ if (class_exists('UUID') === false) {
 		 * @see UUID::VARIANT_RFC4122
 		 * @see UUID::VARIANT_MICROSOFT
 		 * @see UUID::VARIANT_FUTURE_RESERVED
-		 * @returns int An integer in [0, 3] where each value corresponds to one of
+		 * @return int An integer in [0, 3] where each value corresponds to one of
 		 *     the `UUID::VARIANT_*` class constants.
+		 * @throws \Error if this instance does not encapsulate a valid UUID.
 		 */
 		public function getVariant(): int {
-			$ord = ord($this->bytes{8});
+			$ord = ord($this->toBinary(){8});
 			if (($ord & 0xC0) === 0x80) return static::VARIANT_RFC4122;
 			if (($ord & 0xE0) === 0xC0) return static::VARIANT_MICROSOFT;
 			if (($ord & 0x80) === 0x00) return static::VARIANT_NCS;
@@ -680,9 +701,10 @@ if (class_exists('UUID') === false) {
 		 * @return int An integer in [0, 15], the values [1, 5] correspond to one
 		 *     of the `UUID::VERSION_*` class constants. The others are not defined
 		 *     in RFC 4122.
+		 * @throws \Error if this instance does not encapsulate a valid UUID.
 		 */
 		public function getVersion(): int {
-			return ord($this->bytes{6}) >> 4;
+			return ord($this->toBinary(){6}) >> 4;
 		}
 
 		/**
@@ -696,9 +718,10 @@ if (class_exists('UUID') === false) {
 		 * @see Nil
 		 * @return bool **TRUE** if this is the special nil UUID; **FALSE**
 		 *     otherwise.
+		 * @throws \Error if this instance does not encapsulate a valid UUID.
 		 */
 		public function isNil(): bool {
-			return $this->bytes === "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+			return $this->toBinary() === "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 		}
 
 		/**
@@ -714,17 +737,49 @@ if (class_exists('UUID') === false) {
 		 * ```
 		 * <?php
 		 *
-		 * $uuid = UUID::NamespaceDNS();
-		 * assert($uuid->toBinary() === "\x6b\xa7\xb8\x10\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8");
+		 * assert(UUID::NamespaceDNS()->toBinary() === "\x6b\xa7\xb8\x10\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8");
 		 *
 		 * ?>
 		 * ```
 		 *
 		 * @since 7.2
 		 * @see https://php.net/uuid.toBinary
-		 * @return string
+		 * @return string Binary representation of the UUID.
+		 * @throws \Error if this instance does not encapsulate a valid UUID.
 		 */
 		public function toBinary(): string {
+			if (is_string($this->bytes) === false) {
+				$type = 'unknown';
+
+				if (is_array($this->bytes)) {
+					$type = 'array';
+				}
+				elseif ($this->bytes === true || $this->bytes === false) {
+					$type = 'boolean';
+				}
+				elseif (is_float($this->bytes)) {
+					$type = 'float';
+				}
+				elseif (is_int($this->bytes)) {
+					$type = 'integer';
+				}
+				elseif ($this->bytes === null) {
+					$type = 'null';
+				}
+				elseif (is_object($this->bytes)) {
+					$type = 'object';
+				}
+				elseif (is_resource($this->bytes)) {
+					$type = 'resource';
+				}
+
+				throw new \TypeError('Expected ' . __CLASS__ . '::$bytes value to be of type string, but found ' . $type);
+			}
+
+			if (strlen($this->bytes) !== 16) {
+				throw new \Error('Expected ' . __CLASS__ . '::$bytes value to be exactly 16 bytes long, but found ' . strlen($this->bytes));
+			}
+
 			return $this->bytes;
 		}
 
@@ -739,18 +794,18 @@ if (class_exists('UUID') === false) {
 		 * ```
 		 * <?php
 		 *
-		 * $uuid = UUID::NamespaceDNS();
-		 * assert($uuid->toHex() === '6ba7b8109dad11d180b400c04fd430c8');
+		 * assert(UUID::NamespaceDNS()->toHex() === '6ba7b8109dad11d180b400c04fd430c8');
 		 *
 		 * ?>
 		 * ```
 		 *
 		 * @since 7.2
 		 * @see https://php.net/uuid.toHex
-		 * @return string
+		 * @return string Hexadecimal representation of the UUID.
+		 * @throws \Error if this instance does not encapsulate a valid UUID.
 		 */
 		public function toHex(): string {
-			return bin2hex($this->bytes);
+			return bin2hex($this->toBinary());
 		}
 
 		/**
@@ -765,8 +820,7 @@ if (class_exists('UUID') === false) {
 		 * ```
 		 * <?php
 		 *
-		 * $uuid = UUID::NamespaceDNS();
-		 * assert($uuid->toString() === '6ba7b810-9dad-11d1-80b4-00c04fd430c8');
+		 * assert(UUID::NamespaceDNS()->toString() === '6ba7b810-9dad-11d1-80b4-00c04fd430c8');
 		 *
 		 * ?>
 		 * ```
@@ -775,10 +829,11 @@ if (class_exists('UUID') === false) {
 		 * @see https://php.net/uuid.toString
 		 * @see https://tools.ietf.org/html/rfc4122#page-4
 		 * @see https://en.wikipedia.org/wiki/Universally_unique_identifier#Format
-		 * @return string
+		 * @return string String representation of the UUID.
+		 * @throws \Error if this instance does not encapsulate a valid UUID.
 		 */
 		public function toString(): string {
-			$hex = bin2hex($this->bytes);
+			$hex = $this->toHex();
 
 			return substr($hex, 0, 8) . '-' .
 			       substr($hex, 8, 4) . '-' .
@@ -793,7 +848,7 @@ if (class_exists('UUID') === false) {
 		 * immutable objects.
 		 *
 		 * @return void
-		 * @throws Error upon every invocation.
+		 * @throws \Error upon every invocation.
 		 */
 		private function __clone() {
 			throw new Error('Cannot clone immutable ' . __CLASS__ . ' object');
