@@ -623,6 +623,10 @@ if (class_exists('UUID') === false) {
 		 *     bytes long.
 		 */
 		public function __wakeup(): void {
+			if (is_string($this->binary) === false) {
+				throw new UnexpectedValueException('Expected value of type string, but found ' . gettype($this->binary));
+			}
+
 			$length = strlen($this->binary);
 			if ($length !== 16) {
 				throw new UnexpectedValueException("Expected exactly 16 bytes, but found {$length}");
