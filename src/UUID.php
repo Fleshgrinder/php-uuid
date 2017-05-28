@@ -219,7 +219,7 @@ if (class_exists('UUID') === false) {
 		 * @see toBinary
 		 * @var string
 		 */
-		private $binary;
+		private $bytes;
 
 		/**
 		 * Use {@see fromBinary} or {@see parse} to construct a new instance.
@@ -264,8 +264,8 @@ if (class_exists('UUID') === false) {
 				throw new InvalidArgumentException("Expected exactly 16 bytes, but got {$length}");
 			}
 
-			$uuid = new UUID;
-			$uuid->binary = $input;
+			$uuid        = new UUID;
+			$uuid->bytes = $input;
 			return $uuid;
 		}
 
@@ -363,8 +363,8 @@ if (class_exists('UUID') === false) {
 				throw new UUIDParseException('Expected no more than 32 hexadecimal digits', $input, $length - 1);
 			}
 
-			$uuid = new UUID;
-			$uuid->binary = $binary;
+			$uuid        = new UUID;
+			$uuid->bytes = $binary;
 			return $uuid;
 		}
 
@@ -417,9 +417,9 @@ if (class_exists('UUID') === false) {
 		public static function v3(self $namespace, string $name): self {
 			$uuid = new UUID;
 
-			$uuid->binary    = md5($namespace->toBinary() . $name, true);
-			$uuid->binary{6} = chr((ord($uuid->binary{6}) & 0b00001111) | 0b00110000);
-			$uuid->binary{8} = chr((ord($uuid->binary{8}) & 0b00111111) | 0b10000000);
+			$uuid->bytes    = md5($namespace->toBinary() . $name, true);
+			$uuid->bytes{6} = chr((ord($uuid->bytes{6}) & 0b00001111) | 0b00110000);
+			$uuid->bytes{8} = chr((ord($uuid->bytes{8}) & 0b00111111) | 0b10000000);
 
 			return $uuid;
 		}
@@ -458,9 +458,9 @@ if (class_exists('UUID') === false) {
 		public static function v4(): self {
 			$uuid = new UUID;
 
-			$uuid->binary    = random_bytes(16);
-			$uuid->binary{6} = chr((ord($uuid->binary{6}) & 0b00001111) | 0b01000000);
-			$uuid->binary{8} = chr((ord($uuid->binary{8}) & 0b00111111) | 0b10000000);
+			$uuid->bytes    = random_bytes(16);
+			$uuid->bytes{6} = chr((ord($uuid->bytes{6}) & 0b00001111) | 0b01000000);
+			$uuid->bytes{8} = chr((ord($uuid->bytes{8}) & 0b00111111) | 0b10000000);
 
 			return $uuid;
 		}
@@ -509,9 +509,9 @@ if (class_exists('UUID') === false) {
 		public static function v5(self $namespace, string $name): self {
 			$uuid = new UUID;
 
-			$uuid->binary    = substr(sha1($namespace->toBinary() . $name, true), 0, 16);
-			$uuid->binary{6} = chr((ord($uuid->binary{6}) & 0b00001111) | 0b01010000);
-			$uuid->binary{8} = chr((ord($uuid->binary{8}) & 0b00111111) | 0b10000000);
+			$uuid->bytes    = substr(sha1($namespace->toBinary() . $name, true), 0, 16);
+			$uuid->bytes{6} = chr((ord($uuid->bytes{6}) & 0b00001111) | 0b01010000);
+			$uuid->bytes{8} = chr((ord($uuid->bytes{8}) & 0b00111111) | 0b10000000);
 
 			return $uuid;
 		}
@@ -526,8 +526,8 @@ if (class_exists('UUID') === false) {
 		 * @return UUID
 		 */
 		public static function NamespaceDNS(): self {
-			$uuid = new UUID;
-			$uuid->binary = "\x6b\xa7\xb8\x10\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
+			$uuid        = new UUID;
+			$uuid->bytes = "\x6b\xa7\xb8\x10\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
 		}
 
@@ -541,8 +541,8 @@ if (class_exists('UUID') === false) {
 		 * @return UUID
 		 */
 		public static function NamespaceOID(): self {
-			$uuid = new UUID;
-			$uuid->binary = "\x6b\xa7\xb8\x12\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
+			$uuid        = new UUID;
+			$uuid->bytes = "\x6b\xa7\xb8\x12\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
 		}
 
@@ -556,8 +556,8 @@ if (class_exists('UUID') === false) {
 		 * @return UUID
 		 */
 		public static function NamespaceURL(): self {
-			$uuid = new UUID;
-			$uuid->binary = "\x6b\xa7\xb8\x11\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
+			$uuid        = new UUID;
+			$uuid->bytes = "\x6b\xa7\xb8\x11\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
 		}
 
@@ -574,8 +574,8 @@ if (class_exists('UUID') === false) {
 		 * @return UUID
 		 */
 		public static function NamespaceX500(): self {
-			$uuid = new UUID;
-			$uuid->binary = "\x6b\xa7\xb8\x14\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
+			$uuid        = new UUID;
+			$uuid->bytes = "\x6b\xa7\xb8\x14\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8";
 			return $uuid;
 		}
 
@@ -589,8 +589,8 @@ if (class_exists('UUID') === false) {
 		 * @return UUID
 		 */
 		public static function Nil(): self {
-			$uuid = new UUID;
-			$uuid->binary = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+			$uuid        = new UUID;
+			$uuid->bytes = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 			return $uuid;
 		}
 
@@ -623,11 +623,11 @@ if (class_exists('UUID') === false) {
 		 *     bytes long.
 		 */
 		public function __wakeup(): void {
-			if (is_string($this->binary) === false) {
-				throw new UnexpectedValueException('Expected value of type string, but found ' . gettype($this->binary));
+			if (is_string($this->bytes) === false) {
+				throw new UnexpectedValueException('Expected value of type string, but found ' . gettype($this->bytes));
 			}
 
-			$length = strlen($this->binary);
+			$length = strlen($this->bytes);
 			if ($length !== 16) {
 				throw new UnexpectedValueException("Expected exactly 16 bytes, but found {$length}");
 			}
@@ -652,7 +652,7 @@ if (class_exists('UUID') === false) {
 		 *     the `UUID::VARIANT_*` class constants.
 		 */
 		public function getVariant(): int {
-			$ord = ord($this->binary{8});
+			$ord = ord($this->bytes{8});
 			if (($ord & 0xC0) === 0x80) return static::VARIANT_RFC4122;
 			if (($ord & 0xE0) === 0xC0) return static::VARIANT_MICROSOFT;
 			if (($ord & 0x80) === 0x00) return static::VARIANT_NCS;
@@ -682,7 +682,7 @@ if (class_exists('UUID') === false) {
 		 *     in RFC 4122.
 		 */
 		public function getVersion(): int {
-			return ord($this->binary{6}) >> 4;
+			return ord($this->bytes{6}) >> 4;
 		}
 
 		/**
@@ -698,7 +698,7 @@ if (class_exists('UUID') === false) {
 		 *     otherwise.
 		 */
 		public function isNil(): bool {
-			return $this->binary === "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+			return $this->bytes === "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 		}
 
 		/**
@@ -725,7 +725,7 @@ if (class_exists('UUID') === false) {
 		 * @return string
 		 */
 		public function toBinary(): string {
-			return $this->binary;
+			return $this->bytes;
 		}
 
 		/**
@@ -750,7 +750,7 @@ if (class_exists('UUID') === false) {
 		 * @return string
 		 */
 		public function toHex(): string {
-			return bin2hex($this->binary);
+			return bin2hex($this->bytes);
 		}
 
 		/**
@@ -778,7 +778,7 @@ if (class_exists('UUID') === false) {
 		 * @return string
 		 */
 		public function toString(): string {
-			$hex = bin2hex($this->binary);
+			$hex = bin2hex($this->bytes);
 
 			return substr($hex, 0, 8) . '-' .
 			       substr($hex, 8, 4) . '-' .
