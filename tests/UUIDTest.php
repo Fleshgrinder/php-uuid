@@ -136,12 +136,12 @@ final class UUIDTest extends TestCase {
 	 * @covers ::__wakeup
 	 * @dataProvider provideInvalidBinaryValues
 	 * @expectedException UnexpectedValueException
-	 * @expectedExceptionMessage Expected exactly 16 bytes, but found
+	 * @expectedExceptionMessage Expected UUID::$bytes value to be exactly 16 bytes long, but found
 	 */
-	public static function testDeserializationFailure($binary) {
-		$i = strlen($binary);
+	public static function testDeserializationFailure($bytes) {
+		$i = strlen($bytes);
 
-		unserialize("O:4:\"UUID\":1:{s:12:\"\0UUID\0binary\";s:{$i}:\"{$binary}\";}");
+		unserialize("O:4:\"UUID\":1:{s:11:\"\0UUID\0bytes\";s:{$i}:\"{$bytes}\";}");
 	}
 
 	/**
@@ -150,9 +150,9 @@ final class UUIDTest extends TestCase {
 	 * @covers ::toBinary
 	 */
 	public static function testFromBinary() {
-		$binary = random_bytes(16);
+		$bytes = random_bytes(16);
 
-		static::assertSame($binary, UUID::fromBinary($binary)->toBinary());
+		static::assertSame($bytes, UUID::fromBinary($bytes)->toBinary());
 	}
 
 	/**
@@ -161,8 +161,8 @@ final class UUIDTest extends TestCase {
 	 * @expectedException InvalidArgumentException
 	 * @expectedExceptionMessage Expected exactly 16 bytes, but got
 	 */
-	public static function testFromBinaryFailure($binary) {
-		UUID::fromBinary($binary);
+	public static function testFromBinaryFailure($bytes) {
+		UUID::fromBinary($bytes);
 	}
 
 	public static function provideVariants() {
@@ -178,10 +178,11 @@ final class UUIDTest extends TestCase {
 	 * @covers ::__construct
 	 * @covers ::fromBinary
 	 * @covers ::getVariant
+	 * @covers ::toBinary
 	 * @dataProvider provideVariants
 	 */
-	public static function testGetVariant($expected, $binary) {
-		static::assertSame($expected, UUID::fromBinary($binary)->getVariant());
+	public static function testGetVariant($expected, $bytes) {
+		static::assertSame($expected, UUID::fromBinary($bytes)->getVariant());
 	}
 
 	public static function provideNCSVariants() {
@@ -197,16 +198,18 @@ final class UUIDTest extends TestCase {
 	 * @covers ::__construct
 	 * @covers ::fromBinary
 	 * @covers ::getVariant
+	 * @covers ::toBinary
 	 * @dataProvider provideNCSVariants
 	 */
-	public static function testNCSVariants($binary) {
-		static::assertSame(UUID::VARIANT_NCS, UUID::fromBinary($binary)->getVariant());
+	public static function testNCSVariants($bytes) {
+		static::assertSame(UUID::VARIANT_NCS, UUID::fromBinary($bytes)->getVariant());
 	}
 
 	/**
 	 * @covers ::__construct
 	 * @covers ::fromBinary
 	 * @covers ::getVariant
+	 * @covers ::toBinary
 	 */
 	public static function testRFCVariant() {
 		static::assertSame(UUID::VARIANT_RFC4122, UUID::fromBinary("\x00\x00\x00\x00\x00\x00\x00\x00\xA0\x00\x00\x00\x00\x00\x00\x00")->getVariant());
@@ -224,6 +227,7 @@ final class UUIDTest extends TestCase {
 
 	/**
 	 * @covers ::getVersion
+	 * @covers ::toBinary
 	 * @dataProvider provideVersions
 	 */
 	public static function testGetVersion($expected, UUID $uuid) {
@@ -250,7 +254,7 @@ final class UUIDTest extends TestCase {
 	 * @dataProvider provideParseInput
 	 */
 	public static function testParse($input) {
-		$p = new ReflectionProperty('UUID', 'binary');
+		$p = new ReflectionProperty('UUID', 'bytes');
 		$p->setAccessible(true);
 
 		static::assertSame("\x12\x3e\x45\x67\xe8\x9b\x12\xd3\xa4\x56\x42\x66\x55\x44\x00\x00", $p->getValue(UUID::parse($input)));
@@ -302,6 +306,7 @@ final class UUIDTest extends TestCase {
 	 * @covers ::NamespaceDNS
 	 * @covers ::v3
 	 * @covers ::toBinary
+	 * @covers ::toHex
 	 * @covers ::toString
 	 */
 	public static function testV3() {
@@ -321,6 +326,7 @@ final class UUIDTest extends TestCase {
 	 * @covers ::NamespaceDNS
 	 * @covers ::v5
 	 * @covers ::toBinary
+	 * @covers ::toHex
 	 * @covers ::toString
 	 */
 	public static function testV5() {
