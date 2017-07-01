@@ -420,7 +420,6 @@ if (class_exists('UUID') === false) {
 		}
 
 		/**
-		/**
 		 * Construct new version 4 UUID.
 		 *
 		 * Version 4 UUIDs are randomly generated from the best available random
